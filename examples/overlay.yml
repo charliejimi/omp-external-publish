@@ -1,0 +1,7 @@
+# Repo-external overlay for Day28 external publish (see day28-integrated-sequence.md).
+tools:
+  approvalMode: always-ask
+  approval:
+    bash: deny
+    eval: deny
+    publish: prompt

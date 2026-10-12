@@ -1,0 +1,23 @@
+{
+	"name": "omp-external-publish",
+	"version": "0.1.0",
+	"private": true,
+	"description": "An oh-my-pi (omp) package for Day28 external publish: a guard hook on publish (caller allow list, secret scan, audit) and a structured publish tool as the only outward exit.",
+	"type": "module",
+	"license": "MIT",
+	"keywords": ["oh-my-pi", "omp", "coding-agent", "ai-agent", "publish", "guardrails", "approval"],
+	"omp": {
+		"extensions": ["./src/guard.ts", "./src/publish-tool.ts"]
+	},
+	"files": ["src", "examples", "README.md", "README.zh-TW.md", "LICENSE", "CHANGELOG.md"],
+	"scripts": {
+		"test": "bun test --timeout 60000"
+	},
+	"engines": {
+		"bun": ">=1.3.14"
+	},
+	"devDependencies": {
+		"@oh-my-pi/pi-coding-agent": "18.2.8",
+		"@types/bun": "1.3.14"
+	}
+}

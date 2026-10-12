@@ -1,0 +1,7 @@
+{
+	"callers": {
+		"program-caller-a": {
+			"targets": ["d28-demo-1", "d28-demo-2"]
+		}
+	}
+}
