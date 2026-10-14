@@ -1,6 +1,6 @@
 {
 	"name": "omp-external-publish",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"private": true,
 	"description": "An oh-my-pi (omp) package for Day28 external publish: a guard hook on publish (caller allow list, secret scan, audit) and a structured publish tool as the only outward exit.",
 	"type": "module",

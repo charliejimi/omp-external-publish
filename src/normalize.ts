@@ -55,6 +55,20 @@ export function normalizePublishInput(input: Record<string, unknown> | undefined
 	if (!hostIsLoopback(parsed.host)) {
 		return { ok: false, reason: "publish url must point at loopback (127.0.0.1 / localhost / ::1)" };
 	}
+	// The target is checked against `marker`, but an endpoint can also route on the query or on a
+	// target named in the path; neither may name another target than the one that was checked.
+	if (parsed.search !== "" || parsed.hash !== "") {
+		return { ok: false, reason: "publish url must not carry a query string or fragment; the target is set by marker" };
+	}
+	let pathText: string;
+	try {
+		pathText = decodeURIComponent(parsed.pathname);
+	} catch {
+		return { ok: false, reason: "publish url path is not valid percent-encoding" };
+	}
+	if ((pathText.match(/d28-[a-z0-9][a-z0-9-]*/gi) ?? []).some(token => token.toLowerCase() !== marker.toLowerCase())) {
+		return { ok: false, reason: "publish url names a different target than marker" };
+	}
 	const digestFields = { marker, url: parsed.toString(), contentLen: String(Buffer.byteLength(content, "utf8")) };
 	return { ok: true, value: { marker, url: parsed.toString(), content }, digestFields };
 }

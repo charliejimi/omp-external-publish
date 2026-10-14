@@ -7,14 +7,10 @@ export interface PublishHttpResult {
 
 /** POST marker payload to the loopback publish endpoint (Day28 marker server shape). */
 export async function postPublish(action: NormalizedPublish, signal?: AbortSignal): Promise<PublishHttpResult> {
-	const body =
-		action.content.length > 0
-			? action.content
-			: JSON.stringify({ marker: action.marker, content: action.content });
-	const headers: Record<string, string> =
-		action.content.length > 0 && !action.content.trimStart().startsWith("{")
-			? { "content-type": "text/plain; charset=utf-8" }
-			: { "content-type": "application/json" };
+	// Always the envelope, so the checked marker is the field the endpoint routes on; raw content could
+	// name another target in a JSON `marker` field or a bare d28-* token.
+	const body = JSON.stringify({ marker: action.marker, content: action.content });
+	const headers: Record<string, string> = { "content-type": "application/json" };
 	const host = new URL(action.url).host;
 	if (!hostIsLoopback(host)) throw new Error("refusing non-loopback publish url");
 	const response = await fetch(action.url, { method: "POST", headers, body, signal });

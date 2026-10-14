@@ -68,6 +68,20 @@ describe("publish guard hook", () => {
 		expect((result as { input?: { marker?: string } })?.input?.marker).toBe("d28-ok");
 	});
 
+	it("blocks a url that names another target in its query, fragment, or path, and allows the checked one in the path", async () => {
+		const policyPath = writePolicy(tempDir("ep-pol-"), { callers: { svc: { targets: ["d28-ok"] } } });
+		const { toolCall } = await loadExtensions(undefined, tempDir("ep-work-"), policyPath, {
+			OMP_PUBLISH_CALLER: "svc",
+			OMP_PUBLISH_LEDGER: path.join(tempDir("ep-led-"), "audit.jsonl"),
+		});
+		for (const url of ["http://127.0.0.1:5555/publish?marker=d28-prod-1", "http://127.0.0.1:5555/publish#d28-prod-1", "http://127.0.0.1:5555/publish/d28-prod-1"]) {
+			const r = await toolCall("publish", { marker: "d28-ok", url, content: "hello" });
+			expect({ url, block: r?.block }).toEqual({ url, block: true });
+		}
+		const same = await toolCall("publish", { marker: "d28-ok", url: "http://127.0.0.1:5555/publish/d28-ok", content: "hello" });
+		expect(same?.block).toBeFalsy();
+	});
+
 	it("records tool_execution_end and tool_approval_resolved", async () => {
 		const ledger = path.join(tempDir("ep-led-"), "audit.jsonl");
 		const policyPath = writePolicy(tempDir("ep-pol-"), { callers: { svc: { targets: ["d28-ok"] } } });
